@@ -1,6 +1,7 @@
 package com.example.irshad.bakingapp.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.irshad.bakingapp.Adapters.RecipeStepsAdapter;
+import com.example.irshad.bakingapp.IngredientsDetailsActivity;
+import com.example.irshad.bakingapp.MainActivity;
 import com.example.irshad.bakingapp.Model.Recipe;
 import com.example.irshad.bakingapp.R;
 
@@ -38,6 +41,9 @@ public class RecipeDetailsFragment extends Fragment implements RecipeStepsAdapte
     @BindView(R.id.recyclerview_recipe_steps)
     RecyclerView recyclerviewRecipeSteps;
 
+    @BindView(R.id.textview_recipe_details_ingredients_label)
+    TextView textViewIngredients;
+
 
 
 
@@ -62,6 +68,15 @@ public class RecipeDetailsFragment extends Fragment implements RecipeStepsAdapte
         mRecipeStepsAdapter = new RecipeStepsAdapter(getContext(),this,mRecipeStepsArrayList);
         recyclerviewRecipeSteps.setAdapter(mRecipeStepsAdapter);
         recyclerviewRecipeSteps.setLayoutManager(new GridLayoutManager(getContext(),1));
+
+        textViewIngredients.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), IngredientsDetailsActivity.class);
+                intent.putExtra(MainActivity.PARCEL_KEY_RECIPE,mRecipe);
+                startActivity(intent);
+            }
+        });
 
         Log.d(TAG,"Fragment created");
 

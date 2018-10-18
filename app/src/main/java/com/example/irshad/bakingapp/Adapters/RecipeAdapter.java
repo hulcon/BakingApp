@@ -56,6 +56,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         }else {
             recipeViewHolder.recipeItemBackground.setImageResource(R.drawable.recipe);
         }
+
+        String servingsText = (int) mRecipeArrayList.get(i).getServings() + " Servings";
+        recipeViewHolder.textViewServings.setText(servingsText);
     }
 
     @Override
@@ -79,6 +82,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
         @BindView(R.id.imageView_recipe_item_background)
         ImageView recipeItemBackground;
+
+        @BindView(R.id.textview_recipe_servings)
+        TextView textViewServings;
 
         public RecipeViewHolder(@NonNull View itemView) {
             super(itemView);
