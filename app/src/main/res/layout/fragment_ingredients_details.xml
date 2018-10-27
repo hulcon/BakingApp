@@ -45,19 +45,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/textview_ingredient_name_header" />
 
-            <!--TextView
-                android:id="@+id/textview_recipe_ingredients_details_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
-                android:text="@string/ingredients"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large.Inverse"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" /-->
-
             <TextView
                 android:id="@+id/textview_ingredient_name_header"
                 android:layout_width="0dp"

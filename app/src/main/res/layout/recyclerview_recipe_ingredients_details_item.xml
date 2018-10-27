@@ -30,4 +30,11 @@
         app:layout_constraintHorizontal_weight="3"
         tools:text="quantity"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorRecyclerviewItemDivider"
+        app:layout_constraintTop_toBottomOf="@id/textview_ingredient_name" />
+
 </android.support.constraint.ConstraintLayout>

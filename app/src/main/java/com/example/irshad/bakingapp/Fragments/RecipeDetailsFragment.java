@@ -38,6 +38,17 @@ public class RecipeDetailsFragment extends Fragment implements RecipeStepsAdapte
     private ArrayList<Recipe.Step> mRecipeStepsArrayList;
     private RecipeStepsAdapter mRecipeStepsAdapter;
 
+    OnIngredientsClickListener mIngredientsCallback;
+    OnStepsClickListener mStepsCallback;
+
+    public interface OnIngredientsClickListener {
+        void onIngredientsClicked(Recipe recipe);
+    }
+
+    public interface OnStepsClickListener {
+        void onStepsClicked(Recipe.Step recipeStep);
+    }
+
     @BindView(R.id.recyclerview_recipe_steps)
     RecyclerView recyclerviewRecipeSteps;
 
@@ -51,6 +62,22 @@ public class RecipeDetailsFragment extends Fragment implements RecipeStepsAdapte
         // Required empty public constructor
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try{
+            mIngredientsCallback =(OnIngredientsClickListener) context;
+        } catch (ClassCastException e){
+            throw new ClassCastException(context.toString() + " must implement OnIngredientsClickListener");
+        }
+
+        try{
+            mStepsCallback =(OnStepsClickListener) context;
+        } catch (ClassCastException e){
+            throw new ClassCastException(context.toString() + " must implement OnStepsClickListener");
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,9 +99,7 @@ public class RecipeDetailsFragment extends Fragment implements RecipeStepsAdapte
         textViewIngredients.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), IngredientsDetailsActivity.class);
-                intent.putExtra(MainActivity.PARCEL_KEY_RECIPE,mRecipe);
-                startActivity(intent);
+                mIngredientsCallback.onIngredientsClicked(mRecipe);
             }
         });
 
@@ -96,6 +121,6 @@ public class RecipeDetailsFragment extends Fragment implements RecipeStepsAdapte
 
     @Override
     public void onClick(Recipe.Step recipeStep) {
-
+        mStepsCallback.onStepsClicked(recipeStep);
     }
 }
