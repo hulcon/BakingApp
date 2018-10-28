@@ -39,6 +39,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
@@ -172,9 +173,11 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
 
             // Prepare the MediaSource.
             String userAgent = Util.getUserAgent(context, getResources().getString(R.string.app_name));
-            MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
-                    context, userAgent), new DefaultExtractorsFactory(), null, null);
-            mExoPlayer.prepare(mediaSource);
+            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,userAgent);
+            MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(mediaUri);
+            /*MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
+                    context, userAgent), new DefaultExtractorsFactory(), null, null);*/
+            mExoPlayer.prepare(videoSource);
             mExoPlayer.setPlayWhenReady(true);
 
             mStateBuilder = new PlaybackStateCompat.Builder()
