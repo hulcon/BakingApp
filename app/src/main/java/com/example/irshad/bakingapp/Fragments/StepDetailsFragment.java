@@ -53,6 +53,9 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
     public static final String PARCELABLE_EXTRA_STEP_DETAIL = "step_detail";
     public static final String TAG = StepDetailsFragment.class.getSimpleName();
 
+    public static final String EXTRA_KEY_PLAYER_WHEN_READY = "playerWhenReady";
+    public static final String EXTRA_KEY_PLAYER_CURRENT_POSITION = "playerCurrentPosition";
+
     @BindView(R.id.textview_step_description)
     TextView textviewStepDescription;
 
@@ -68,6 +71,9 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
     private Recipe.Step mRecipeStep;
 
     private SimpleExoPlayer mExoPlayer;
+
+    private boolean playWhenReady = true;
+    private long exoplayerCurrentPosition = 0;
 
 
 
@@ -85,6 +91,11 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
         ButterKnife.bind(this,rootView);
         Log.d(TAG,"Fragment Created for step detail ");
         //mPlayerView = rootView.findViewById(R.id.exoplayer_step_video);
+        if(savedInstanceState != null){
+            playWhenReady = savedInstanceState.getBoolean(EXTRA_KEY_PLAYER_WHEN_READY);
+            exoplayerCurrentPosition = savedInstanceState.getLong(EXTRA_KEY_PLAYER_CURRENT_POSITION);
+            Log.d(TAG,"Retrieving exoplayer position and playstate...");
+        }
         if(mRecipeStep != null){
             updateUI();
         }
@@ -178,7 +189,8 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
             /*MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                     context, userAgent), new DefaultExtractorsFactory(), null, null);*/
             mExoPlayer.prepare(videoSource);
-            mExoPlayer.setPlayWhenReady(true);
+            mExoPlayer.setPlayWhenReady(playWhenReady);
+            mExoPlayer.seekTo(exoplayerCurrentPosition);
 
             mStateBuilder = new PlaybackStateCompat.Builder()
                     .setActions(
@@ -299,6 +311,18 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(mExoPlayer != null){
+            playWhenReady = mExoPlayer.getPlayWhenReady();
+            exoplayerCurrentPosition = mExoPlayer.getCurrentPosition();
+            outState.putBoolean(EXTRA_KEY_PLAYER_WHEN_READY,playWhenReady);
+            outState.putLong(EXTRA_KEY_PLAYER_CURRENT_POSITION,exoplayerCurrentPosition);
+            Log.d(TAG,"Saving exoplayer position and playstate...");
         }
     }
 }
