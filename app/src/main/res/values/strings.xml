@@ -10,4 +10,6 @@
     <string name="ingredients">Ingredients</string>
     <string name="ingredient_name_header">Ingredient Name</string>
     <string name="ingredient_quantity_header">Quantity</string>
+    <string name="button_label_previous_step">Previous Step</string>
+    <string name="button_label_next_step">Next Step</string>
 </resources>

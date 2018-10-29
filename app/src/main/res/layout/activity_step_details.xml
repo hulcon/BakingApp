@@ -1,6 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/step_details_fragment"
-    android:layout_height="match_parent"
+
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/constraintlayout_step_detail_phone_portrait_layout"
     android:layout_width="match_parent"
-    android:name="com.example.irshad.bakingapp.Fragments.StepDetailsFragment"/>
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:id="@+id/step_details_fragment_container_for_step_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <!--<fragment
+        android:id="@+id/step_details_fragment"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:name="com.example.irshad.bakingapp.Fragments.StepDetailsFragment"/>-->
+
+   <!-- <Button
+        android:id="@+id/button_previous_step"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/step_details_fragment_container_for_step_activity"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/button_label_previous_step"/>
+
+    <Button
+        android:id="@+id/button_next_step"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/step_details_fragment_container_for_step_activity"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/button_label_next_step"/>-->
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_next_step"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_arrow_forward_black_24dp"
+        android:layout_margin="16dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_previous_step"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/ic_arrow_back_black_24dp"
+        android:layout_margin="16dp" />
+
+</android.support.constraint.ConstraintLayout>

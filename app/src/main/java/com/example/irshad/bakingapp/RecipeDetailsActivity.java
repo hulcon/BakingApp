@@ -14,6 +14,8 @@ import com.example.irshad.bakingapp.Fragments.RecipeDetailsFragment;
 import com.example.irshad.bakingapp.Fragments.StepDetailsFragment;
 import com.example.irshad.bakingapp.Model.Recipe;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -85,13 +87,14 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
     }
 
     @Override
-    public void onStepsClicked(Recipe.Step recipeStep) {
-        Toast.makeText(this, "Step: " + recipeStep.getShortDescription(), Toast.LENGTH_SHORT).show();
+    public void onStepsClicked(ArrayList<Recipe.Step> recipeStepsArrayList, int currentStepClicked) {
+        Toast.makeText(this, "Step: " + recipeStepsArrayList.get(currentStepClicked).getShortDescription(), Toast.LENGTH_SHORT).show();
         if(tabletLandscapeMode){
-            replaceStepsFragment(recipeStep);
+            replaceStepsFragment(recipeStepsArrayList,currentStepClicked);
         } else {
             Intent intent = new Intent(getApplicationContext(), StepDetailsActivity.class);
-            intent.putExtra(StepDetailsFragment.PARCELABLE_EXTRA_STEP_DETAIL,recipeStep);
+            intent.putExtra(StepDetailsFragment.PARCELABLE_EXTRA_STEP_ARRAY_LIST,recipeStepsArrayList);
+            intent.putExtra(StepDetailsFragment.CURRENT_STEP_INDEX,currentStepClicked);
             startActivity(intent);
         }
     }
@@ -112,14 +115,14 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
         ingredientsDetailsFrament.setIngredientsArrayList(recipe.getIngredients());
     }
 
-    private void replaceStepsFragment(Recipe.Step recipeStep){
+    private void replaceStepsFragment(ArrayList<Recipe.Step> recipeSteps,int currentStepIndex){
         FrameLayout stepDetailsContainerFrameLayout = findViewById(R.id.step_details_container);
         FrameLayout ingredientsDetailsContainerFrameLayout = findViewById(R.id.ingredients_details_container);
 
         ingredientsDetailsContainerFrameLayout.setVisibility(View.GONE);
         stepDetailsContainerFrameLayout.setVisibility(View.VISIBLE);
         StepDetailsFragment stepDetailsFragment = new StepDetailsFragment();
-        stepDetailsFragment.setStep(recipeStep);
+        stepDetailsFragment.setStepsArrayList(recipeSteps,currentStepIndex);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.step_details_container,stepDetailsFragment)

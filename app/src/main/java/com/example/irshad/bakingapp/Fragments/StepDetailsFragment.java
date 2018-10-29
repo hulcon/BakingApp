@@ -45,12 +45,15 @@ import com.google.android.exoplayer2.util.Util;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class StepDetailsFragment extends Fragment implements Player.EventListener {
 
-    public static final String PARCELABLE_EXTRA_STEP_DETAIL = "step_detail";
+    public static final String PARCELABLE_EXTRA_STEP_ARRAY_LIST = "step_detail";
+    public static final String CURRENT_STEP_INDEX = "current_step_index";
     public static final String TAG = StepDetailsFragment.class.getSimpleName();
 
     public static final String EXTRA_KEY_PLAYER_WHEN_READY = "playerWhenReady";
@@ -111,8 +114,13 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
         return rootView;
     }
 
-    public void setStep(Recipe.Step recipeStep){
+   /* public void setStep(Recipe.Step recipeStep){
         mRecipeStep = recipeStep;
+        Log.d(TAG,"Description is " + mRecipeStep.getDescription());
+    }*/
+
+    public void setStepsArrayList(ArrayList<Recipe.Step> recipeStepsArrayList,int currentStepIndex){
+        mRecipeStep = recipeStepsArrayList.get(currentStepIndex);
         Log.d(TAG,"Description is " + mRecipeStep.getDescription());
     }
 

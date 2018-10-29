@@ -46,7 +46,7 @@ public class RecipeDetailsFragment extends Fragment implements RecipeStepsAdapte
     }
 
     public interface OnStepsClickListener {
-        void onStepsClicked(Recipe.Step recipeStep);
+        void onStepsClicked(ArrayList<Recipe.Step> recipeStepArrayList, int currentStepClicked);
     }
 
     @BindView(R.id.recyclerview_recipe_steps)
@@ -120,7 +120,7 @@ public class RecipeDetailsFragment extends Fragment implements RecipeStepsAdapte
     }
 
     @Override
-    public void onClick(Recipe.Step recipeStep) {
-        mStepsCallback.onStepsClicked(recipeStep);
+    public void onClick(ArrayList<Recipe.Step> recipeSteps, int currentStepClicked) {
+        mStepsCallback.onStepsClicked(recipeSteps,currentStepClicked);
     }
 }
