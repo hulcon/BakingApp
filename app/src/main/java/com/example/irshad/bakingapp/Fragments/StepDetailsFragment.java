@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -42,6 +43,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -70,6 +72,9 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
 
     @BindView((R.id.progressbar_video_loading))
     ProgressBar progressBarVideoLoading;
+
+    @BindView(R.id.imageview_thumbnail)
+    ImageView imageViewThumbnail;
 
     private Recipe.Step mRecipeStep;
 
@@ -102,22 +107,9 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
         if(mRecipeStep != null){
             updateUI();
         }
-
-
-
-        //mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
-               // (getResources(), R.drawable.ic_serving));
-
-        //initializeMediaSession();
-
-
         return rootView;
     }
 
-   /* public void setStep(Recipe.Step recipeStep){
-        mRecipeStep = recipeStep;
-        Log.d(TAG,"Description is " + mRecipeStep.getDescription());
-    }*/
 
     public void setStepsArrayList(ArrayList<Recipe.Step> recipeStepsArrayList,int currentStepIndex){
         mRecipeStep = recipeStepsArrayList.get(currentStepIndex);
@@ -128,52 +120,26 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
         textviewStepDescription.setText(mRecipeStep.getDescription());
         textviewStepShortDescription.setText(mRecipeStep.getShortDescription());
         String videoUrl = mRecipeStep.getVideoUrl();
+        String thumbnailUrl = mRecipeStep.getThumbnailUrl();
         if(!TextUtils.isEmpty(videoUrl)){
             initializePlayer(Uri.parse(videoUrl));
+            imageViewThumbnail.setVisibility(View.GONE);
             mPlayerView.setVisibility(View.VISIBLE);
             Log.d(TAG,"Video url is " + videoUrl);
-        } else {
+        } else if(!TextUtils.isEmpty(thumbnailUrl)){
+            mPlayerView.setVisibility(View.GONE);
+            imageViewThumbnail.setVisibility(View.VISIBLE);
+            Picasso.get().load(thumbnailUrl).placeholder(R.drawable.recipe).into(imageViewThumbnail);
+        }
+        else {
             Log.d(TAG,"Empty URL encountered");
             mPlayerView.setVisibility(View.GONE);
+            imageViewThumbnail.setVisibility(View.GONE);
         }
 
     }
 
-   /* *//**
-     * Initializes the Media Session to be enabled with media buttons, transport controls, callbacks
-     * and media controller.
-     *//*
-    private void initializeMediaSession() {
 
-        // Create a MediaSessionCompat.
-        mMediaSession = new MediaSessionCompat(getContext(), TAG);
-
-        // Enable callbacks from MediaButtons and TransportControls.
-        mMediaSession.setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
-        // Do not let MediaButtons restart the player when the app is not visible.
-        mMediaSession.setMediaButtonReceiver(null);
-
-        // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player.
-        mStateBuilder = new PlaybackStateCompat.Builder()
-                .setActions(
-                        PlaybackStateCompat.ACTION_PLAY |
-                                PlaybackStateCompat.ACTION_PAUSE |
-                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                                PlaybackStateCompat.ACTION_PLAY_PAUSE);
-
-        mMediaSession.setPlaybackState(mStateBuilder.build());
-
-
-        // MySessionCallback has methods that handle callbacks from a media controller.
-        //mMediaSession.setCallback(new MySessionCallback());
-
-        // Start the Media Session since the activity is active.
-        mMediaSession.setActive(true);
-    }
-*/
     /**
      * Initialize ExoPlayer.
      * @param mediaUri The URI of the sample to play.
@@ -284,31 +250,16 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
     }
 
 
-    /**
-     * Media Session Callbacks, where all external clients control the player.
-     *//*
-    private class MySessionCallback extends MediaSessionCompat.Callback {
-        @Override
-        public void onPlay() {
-            mExoPlayer.setPlayWhenReady(true);
-        }
-
-        @Override
-        public void onPause() {
-            mExoPlayer.setPlayWhenReady(false);
-        }
-
-        @Override
-        public void onSkipToPrevious() {
-            mExoPlayer.seekTo(0);
-        }
-    }*/
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         releasePlayer();
-        //mMediaSession.setActive(false);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        releasePlayer();
     }
 
     /**
