@@ -1,5 +1,6 @@
 package com.example.irshad.bakingapp;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,19 +17,31 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 
-public class StepDetailsActivity extends AppCompatActivity {
+public class StepDetailsActivity extends AppCompatActivity implements StepDetailsFragment.WasVideoPlayingCallback {
 
     public static final String TAG = StepDetailsActivity.class.getSimpleName();
     private ArrayList<Recipe.Step> recipeStepsArrayList;
     private int currentStepIndex;
     private boolean phonePortraitMode;
 
+    private boolean mWasVideoPlayingWhenRotated;
+    private long mVideoPositionWhenRotated;
+    private boolean mPlayWhenReadyStatus;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_details);
 
-        recipeStepsArrayList = getIntent().getParcelableArrayListExtra(StepDetailsFragment.PARCELABLE_EXTRA_STEP_ARRAY_LIST);
+        Intent parentIntent = getIntent();
+        if(parentIntent != null){
+            recipeStepsArrayList = parentIntent.getParcelableArrayListExtra(StepDetailsFragment.PARCELABLE_EXTRA_STEP_ARRAY_LIST);
+            mWasVideoPlayingWhenRotated = parentIntent.getBooleanExtra(StepDetailsFragment.EXTRA_KEY_WAS_VIDEO_PLAYING, false);
+            mVideoPositionWhenRotated = parentIntent.getLongExtra(StepDetailsFragment.EXTRA_KEY_PLAYER_CURRENT_POSITION, 0);
+            mPlayWhenReadyStatus = parentIntent.getBooleanExtra(StepDetailsFragment.EXTRA_KEY_PLAYER_WHEN_READY, true);
+        }
+
+
 
         if(savedInstanceState != null){
             currentStepIndex = savedInstanceState.getInt(StepDetailsFragment.CURRENT_STEP_INDEX);
@@ -50,6 +63,9 @@ public class StepDetailsActivity extends AppCompatActivity {
                         .add(R.id.step_details_fragment_container_for_step_activity, stepDetailsFragment)
                         .commit();
                 stepDetailsFragment.setStepsArrayList(recipeStepsArrayList, currentStepIndex);
+                if(mWasVideoPlayingWhenRotated){
+                    stepDetailsFragment.resumeVideoFromTime(mVideoPositionWhenRotated, mPlayWhenReadyStatus);
+                }
             } else {
                 StepDetailsFragment stepDetailsPortraitFragment = (StepDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.step_details_fragment_container_for_step_activity);
                 if (stepDetailsPortraitFragment != null) {
@@ -150,5 +166,11 @@ public class StepDetailsActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(StepDetailsFragment.CURRENT_STEP_INDEX,currentStepIndex);
+    }
+
+
+    @Override
+    public void onDeviceRotatedWhileVideoPlaying(int currentStepIndex, boolean videoPlayingWhenDeviceRotated, long videoCurrentPosition, boolean playWhenReadyStatus) {
+
     }
 }

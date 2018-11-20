@@ -20,11 +20,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDetailsFragment.OnIngredientsClickListener,
-        RecipeDetailsFragment.OnStepsClickListener{
+        RecipeDetailsFragment.OnStepsClickListener, StepDetailsFragment.WasVideoPlayingCallback{
 
     public static final String TAG = RecipeDetailsActivity.class.getSimpleName();
 
     private Recipe recipe;
+    private ArrayList<Recipe.Step> mRecipeStepsArrayList;
     private boolean tabletLandscapeMode;
 
 
@@ -41,6 +42,10 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
         Log.d(TAG,"Ingredients: " + recipe.getIngredients().size());
         Log.d(TAG,"Steps: " +  recipe.getSteps().size());
         Log.d(TAG, "Ingredients: " + recipe.getIngredients());
+
+        if(recipe != null){
+            mRecipeStepsArrayList = recipe.getSteps();
+        }
 
         if(findViewById(R.id.tablet_landscape_mode) != null){
             tabletLandscapeMode = true;
@@ -124,5 +129,23 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
         fragmentManager.beginTransaction()
                 .replace(R.id.step_details_container,stepDetailsFragment)
                 .commit();
+    }
+
+    @Override
+    public void onDeviceRotatedWhileVideoPlaying(int currentStepIndex, boolean videoPlayingWhenDeviceRotated, long videoCurrentPosition, boolean playWhenReadyStatus) {
+
+        if(!tabletLandscapeMode){
+            if(videoPlayingWhenDeviceRotated){
+                Log.d(TAG,"BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Steps are " + mRecipeStepsArrayList.size() + "  and current is " + currentStepIndex);
+                Log.d(TAG, "Video Position Received is ........................ " + videoCurrentPosition);
+                Intent intent = new Intent(getApplicationContext(), StepDetailsActivity.class);
+                intent.putExtra(StepDetailsFragment.PARCELABLE_EXTRA_STEP_ARRAY_LIST, mRecipeStepsArrayList);
+                intent.putExtra(StepDetailsFragment.CURRENT_STEP_INDEX, currentStepIndex);
+                intent.putExtra(StepDetailsFragment.EXTRA_KEY_WAS_VIDEO_PLAYING, videoPlayingWhenDeviceRotated);
+                intent.putExtra(StepDetailsFragment.EXTRA_KEY_PLAYER_CURRENT_POSITION, videoCurrentPosition);
+                intent.putExtra(StepDetailsFragment.EXTRA_KEY_PLAYER_WHEN_READY, playWhenReadyStatus);
+                startActivity(intent);
+            }
+        }
     }
 }

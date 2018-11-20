@@ -60,6 +60,16 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
 
     public static final String EXTRA_KEY_PLAYER_WHEN_READY = "playerWhenReady";
     public static final String EXTRA_KEY_PLAYER_CURRENT_POSITION = "playerCurrentPosition";
+    public static final String EXTRA_KEY_WAS_VIDEO_PLAYING = "wasVideoPlaying";
+    public static final String EXTRA_KEY_STEP_INDEX_WHEN_DEVICE_ROTATED = "stepIndexWhenDeviceRotated";
+
+    private boolean wasVideoPlaying = false;
+
+    WasVideoPlayingCallback mWasVideoPlayingCallBack;
+
+    public interface WasVideoPlayingCallback {
+        void onDeviceRotatedWhileVideoPlaying(int currentStepIndex, boolean videoPlayingWhenDeviceRotated, long videoCurrentPosition, boolean playWhenReadyStatus);
+    }
 
     @BindView(R.id.textview_step_description)
     TextView textviewStepDescription;
@@ -77,6 +87,7 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
     ImageView imageViewThumbnail;
 
     private Recipe.Step mRecipeStep;
+    private int mCurrentStepIndex;
 
     private SimpleExoPlayer mExoPlayer;
 
@@ -98,10 +109,14 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
         View rootView = inflater.inflate(R.layout.fragment_step_details, container, false);
         ButterKnife.bind(this,rootView);
         Log.d(TAG,"Fragment Created for step detail ");
-        //mPlayerView = rootView.findViewById(R.id.exoplayer_step_video);
+
         if(savedInstanceState != null){
             playWhenReady = savedInstanceState.getBoolean(EXTRA_KEY_PLAYER_WHEN_READY);
             exoplayerCurrentPosition = savedInstanceState.getLong(EXTRA_KEY_PLAYER_CURRENT_POSITION);
+            wasVideoPlaying = savedInstanceState.getBoolean(EXTRA_KEY_WAS_VIDEO_PLAYING);
+            mCurrentStepIndex = savedInstanceState.getInt(EXTRA_KEY_STEP_INDEX_WHEN_DEVICE_ROTATED);
+            mWasVideoPlayingCallBack.onDeviceRotatedWhileVideoPlaying(mCurrentStepIndex, wasVideoPlaying, exoplayerCurrentPosition, playWhenReady);
+
             Log.d(TAG,"Retrieving exoplayer position and playstate... CURRENT POSITION IS " + exoplayerCurrentPosition);
         }
         if(mRecipeStep != null){
@@ -115,7 +130,14 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
 
     public void setStepsArrayList(ArrayList<Recipe.Step> recipeStepsArrayList,int currentStepIndex){
         mRecipeStep = recipeStepsArrayList.get(currentStepIndex);
+        mCurrentStepIndex = currentStepIndex;
         Log.d(TAG,"Description is " + mRecipeStep.getDescription());
+    }
+
+    public void resumeVideoFromTime(long videoPosition, boolean playWhenReadyStatus){
+        playWhenReady = playWhenReadyStatus;
+        exoplayerCurrentPosition = videoPosition;
+        Log.d(TAG,"SEEKING EXPLICITLY to .................................................." + videoPosition);
     }
 
     public void updateUI(){
@@ -218,8 +240,6 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
         if(playbackState == Player.STATE_READY){
             progressBarVideoLoading.setVisibility(View.GONE);
         }
-        //mMediaSession.setPlaybackState(mStateBuilder.build());
-
     }
 
     @Override
@@ -256,7 +276,6 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        //releasePlayer();
     }
 
     @Override
@@ -275,20 +294,31 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
+            wasVideoPlaying = true;
+        } else {
+            wasVideoPlaying = false;
         }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        /*if(mExoPlayer != null){*/
-           /* playWhenReady = mExoPlayer.getPlayWhenReady();
-            exoplayerCurrentPosition = mExoPlayer.getCurrentPosition();*/
-            outState.putBoolean(EXTRA_KEY_PLAYER_WHEN_READY,playWhenReady);
-            outState.putLong(EXTRA_KEY_PLAYER_CURRENT_POSITION,exoplayerCurrentPosition);
-            Log.d(TAG,"Saving exoplayer position and playstate... CURRENT POSITION SAVED IS " + exoplayerCurrentPosition);
-        /*} else {
-            Log.d(TAG,"Exoplayer is NULL!!!!!!!");
-        }*/
+
+        outState.putBoolean(EXTRA_KEY_PLAYER_WHEN_READY, playWhenReady);
+        outState.putLong(EXTRA_KEY_PLAYER_CURRENT_POSITION, exoplayerCurrentPosition);
+        outState.putBoolean(EXTRA_KEY_WAS_VIDEO_PLAYING, wasVideoPlaying);
+        outState.putInt(EXTRA_KEY_STEP_INDEX_WHEN_DEVICE_ROTATED, mCurrentStepIndex);
+        Log.d(TAG,"Saving exoplayer position and playstate... CURRENT POSITION SAVED IS " + exoplayerCurrentPosition);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try{
+            mWasVideoPlayingCallBack = (WasVideoPlayingCallback) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement WasVideoPlayingCallback method");
+        }
     }
 }
