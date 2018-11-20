@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/step_details_fragment"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:name="com.example.irshad.bakingapp.Fragments.StepDetailsFragment" />
+    android:name="com.example.irshad.bakingapp.Fragments.StepDetailsFragment" />-->
+<FrameLayout android:id="@+id/step_details_fragment_container_for_step_activity"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" />
 

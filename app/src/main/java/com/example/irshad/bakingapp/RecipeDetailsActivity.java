@@ -60,9 +60,6 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
             tabletLandscapeMode = false;
         }
 
-
-
-
         if(getSupportActionBar() != null){
             getSupportActionBar().setTitle(recipe.getName());
         }

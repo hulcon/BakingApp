@@ -43,12 +43,20 @@ public class StepDetailsActivity extends AppCompatActivity {
             phonePortraitMode = true;
             Log.d(TAG,"************** PORTRAIT MODE ACTIVE ***************** iNDEX IS" + currentStepIndex);
 
-            StepDetailsFragment stepDetailsFragment = new StepDetailsFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .add(R.id.step_details_fragment_container_for_step_activity,stepDetailsFragment)
-                    .commit();
-            stepDetailsFragment.setStepsArrayList(recipeStepsArrayList,currentStepIndex);
+            if(savedInstanceState == null) {
+                StepDetailsFragment stepDetailsFragment = new StepDetailsFragment();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .add(R.id.step_details_fragment_container_for_step_activity, stepDetailsFragment)
+                        .commit();
+                stepDetailsFragment.setStepsArrayList(recipeStepsArrayList, currentStepIndex);
+            } else {
+                StepDetailsFragment stepDetailsPortraitFragment = (StepDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.step_details_fragment_container_for_step_activity);
+                if (stepDetailsPortraitFragment != null) {
+                    stepDetailsPortraitFragment.setStepsArrayList(recipeStepsArrayList, currentStepIndex);
+                }
+            }
+
 
             FloatingActionButton fabPreviousStep = findViewById(R.id.fab_previous_step);
             FloatingActionButton fabNextStep = findViewById(R.id.fab_next_step);
@@ -93,11 +101,21 @@ public class StepDetailsActivity extends AppCompatActivity {
         } else {
             phonePortraitMode = false;
             Log.d(TAG,"************** LANDSCAPE MODE ACTIVE *****************");
-            StepDetailsFragment stepDetailsLandscapeFragment = (StepDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.step_details_fragment);
-            if (stepDetailsLandscapeFragment != null) {
-                stepDetailsLandscapeFragment.setStepsArrayList(recipeStepsArrayList, currentStepIndex);
-                stepDetailsLandscapeFragment.updateUI();
+
+            if(savedInstanceState == null) {
+                StepDetailsFragment stepDetailsFragment = new StepDetailsFragment();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .add(R.id.step_details_fragment_container_for_step_activity, stepDetailsFragment)
+                        .commit();
+                stepDetailsFragment.setStepsArrayList(recipeStepsArrayList, currentStepIndex);
+            } else {
+                StepDetailsFragment stepDetailsLandscapeFragment = (StepDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.step_details_fragment_container_for_step_activity);
+                if (stepDetailsLandscapeFragment != null) {
+                    stepDetailsLandscapeFragment.setStepsArrayList(recipeStepsArrayList, currentStepIndex);
+                }
             }
+
         }
 
     }
