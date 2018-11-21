@@ -136,8 +136,6 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
 
         if(!tabletLandscapeMode){
             if(videoPlayingWhenDeviceRotated){
-                Log.d(TAG,"BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Steps are " + mRecipeStepsArrayList.size() + "  and current is " + currentStepIndex);
-                Log.d(TAG, "Video Position Received is ........................ " + videoCurrentPosition);
                 Intent intent = new Intent(getApplicationContext(), StepDetailsActivity.class);
                 intent.putExtra(StepDetailsFragment.PARCELABLE_EXTRA_STEP_ARRAY_LIST, mRecipeStepsArrayList);
                 intent.putExtra(StepDetailsFragment.CURRENT_STEP_INDEX, currentStepIndex);

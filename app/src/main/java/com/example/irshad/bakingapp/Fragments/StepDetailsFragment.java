@@ -62,8 +62,10 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
     public static final String EXTRA_KEY_PLAYER_CURRENT_POSITION = "playerCurrentPosition";
     public static final String EXTRA_KEY_WAS_VIDEO_PLAYING = "wasVideoPlaying";
     public static final String EXTRA_KEY_STEP_INDEX_WHEN_DEVICE_ROTATED = "stepIndexWhenDeviceRotated";
+    public static final String EXTRA_KEY_VIDEO_URL = "videoURL";
 
     private boolean wasVideoPlaying = false;
+    private String mVideoURL = null;
 
     WasVideoPlayingCallback mWasVideoPlayingCallBack;
 
@@ -116,6 +118,7 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
             wasVideoPlaying = savedInstanceState.getBoolean(EXTRA_KEY_WAS_VIDEO_PLAYING);
             mCurrentStepIndex = savedInstanceState.getInt(EXTRA_KEY_STEP_INDEX_WHEN_DEVICE_ROTATED);
             mWasVideoPlayingCallBack.onDeviceRotatedWhileVideoPlaying(mCurrentStepIndex, wasVideoPlaying, exoplayerCurrentPosition, playWhenReady);
+            mVideoURL = savedInstanceState.getString(EXTRA_KEY_VIDEO_URL);
 
             Log.d(TAG,"Retrieving exoplayer position and playstate... CURRENT POSITION IS " + exoplayerCurrentPosition);
         }
@@ -146,7 +149,8 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
         String videoUrl = mRecipeStep.getVideoUrl();
         String thumbnailUrl = mRecipeStep.getThumbnailUrl();
         if(!TextUtils.isEmpty(videoUrl)){
-            initializePlayer(Uri.parse(videoUrl));
+            mVideoURL = videoUrl;
+            //initializePlayer(Uri.parse(videoUrl));
             imageViewThumbnail.setVisibility(View.GONE);
             mPlayerView.setVisibility(View.VISIBLE);
             Log.d(TAG,"Video url is " + videoUrl);
@@ -281,7 +285,37 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
     @Override
     public void onStop() {
         super.onStop();
-        releasePlayer();
+        if(Util.SDK_INT > 23){
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            if(!TextUtils.isEmpty(mVideoURL)){
+                initializePlayer(Uri.parse(mVideoURL));
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if ((Util.SDK_INT <= 23 || mExoPlayer == null)) {
+            if(!TextUtils.isEmpty(mVideoURL)){
+                initializePlayer(Uri.parse(mVideoURL));
+            }
+        }
     }
 
     /**
@@ -308,6 +342,7 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
         outState.putLong(EXTRA_KEY_PLAYER_CURRENT_POSITION, exoplayerCurrentPosition);
         outState.putBoolean(EXTRA_KEY_WAS_VIDEO_PLAYING, wasVideoPlaying);
         outState.putInt(EXTRA_KEY_STEP_INDEX_WHEN_DEVICE_ROTATED, mCurrentStepIndex);
+        outState.putString(EXTRA_KEY_VIDEO_URL, mVideoURL);
         Log.d(TAG,"Saving exoplayer position and playstate... CURRENT POSITION SAVED IS " + exoplayerCurrentPosition);
     }
 
